@@ -1,7 +1,12 @@
+from typing import List
+from paciente.paciente import Paciente
+from consulta.consultas import Consulta
+from medico.medico import Medico
+
 class Hospital:
-    pacientes = []
-    medicos = []
-    consultas = []
+    pacientes: List[Paciente] = []
+    medicos: List[Medico] = []
+    consultas: List[Consulta] = []
     
     def registrar_consulta(self, id_paciente, id_medico):
         if self.validar_cantidad_usuarios() == False:

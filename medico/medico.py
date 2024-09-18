@@ -1,13 +1,13 @@
 import random
 
 class Medico:
-    id = 0
-    nombre = ""
-    ano_nacimiento = 0
-    direccion = ""
-    rfc = ""
+    id: int
+    nombre: str
+    ano_nacimiento: int
+    direccion: str
+    rfc: str
     
-    def __init__(self, nombre, ano_nacimiento, direccion, rfc):
+    def __init__(self, nombre: str, ano_nacimiento: int, direccion: str, rfc: str):
         self.id = random.randint(1,1000)
         self.nombre = nombre
         self.ano_nacimiento = ano_nacimiento
