@@ -33,14 +33,20 @@ class Escuela:
       ano = año
       dia = datetime.now().day
       aleatorio = randint(500, 5000)
-      letras_inicio = nombre [:2]
-      letras_final = rfc [-2:]
+      letras_inicio = nombre [:2].upper()
+      letras_final = rfc [-2:].upper()
       longitud_mas_uno = len(self.lista_estudiantes) + 1
       
       numero_control = f"M{ano}{dia}{aleatorio}{letras_inicio}{letras_final}{longitud_mas_uno}"
       return numero_control
       
-       
       
+   def registrar_materia(self, materia_regis: Materia):
+      self.lista_materias.append(materia_regis)
       
+   def generar_numero_control_materia(self, nombre:str, semestre: int, creditos: int):
+      letras_final = nombre [-2:].upper()
+      aleatorio = randint(1, 1000)
       
+      numero_control = f"MT{letras_final}{semestre}{creditos}{aleatorio}"
+      return numero_control
