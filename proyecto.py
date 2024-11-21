@@ -4,6 +4,9 @@ import mysql.connector
 from tkinter import *
 
 def login():
+    
+    global root
+    
     def verificar_usuario():
         usuario = entry_usuario.get()
         contraseña = entry_contraseña.get()
@@ -23,9 +26,20 @@ def login():
             ''', (usuario, contraseña))
     
             usuario = cursor.fetchone()
+            
+            
     
             if usuario:
-                messagebox.showinfo("Login exitoso", f"Bienvenido {usuario[1]}")
+                messagebox.showinfo("Login exitoso", f"Bienvenido(a) {usuario[1]}")
+                if usuario[5] == "Administrador":
+                    messagebox.showinfo("Informacion", "Ingreso como Administrador")
+                    root.withdraw()
+                    pantalla_admin()
+                    
+                elif usuario[5] == "Empleado":
+                    messagebox.showinfo("Informacion", "Ingreso como Empleado")
+                    root.withdraw()
+                    pantalla_empleado() 
             else:
                 messagebox.showerror("Error", "Usuario o contraseña no encontrados.")
     
@@ -56,7 +70,8 @@ def login():
     root.mainloop()
 
 
-def registrar_empleado():
+def registrar_empleado(ventana_actual):
+    ventana_actual.destroy()
     
     def mostrar():
         mysqlC = mysql.connector.connect(host= "localhost", user="root", password="", database="proyecto")
@@ -151,7 +166,7 @@ def registrar_empleado():
         micursos=mysqlC.cursor()
         
         try:
-            micursos.execute(f"UPDATE usuarios set nombre='{nombreAdd}', apellido='{apellidoAdd}', usuario='{usuarioAdd}', contraseña='{contraAdd}', rol='{rolAdd} where id={idAdd}")
+            micursos.execute(f"UPDATE usuarios set nombre='{nombreAdd}', apellido='{apellidoAdd}', usuario='{usuarioAdd}', contraseña='{contraAdd}', rol='{rolAdd}' where id={idAdd}")
             mysqlC.commit()
             identificador.delete(0,END)
             name.delete(0,END)
@@ -167,60 +182,55 @@ def registrar_empleado():
         actualizar()
         
 
-    root = tk.Tk()
-    root.geometry("1200x500")
+    empleado = tk.Toplevel()
+    empleado.geometry("1200x500")
     
-    label1 = tk.Label(root,text="Registro de usuarios", fg="red",font=("Arial",28)).place(x=500,y=0)
+    label1 = tk.Label(empleado,text="Registro de usuarios", fg="red",font=("Arial",28)).place(x=500,y=0)
     
-    global identificador
-    global name
-    global apellido
-    global usuario
-    global password
-    global rol
     
-    labelid = tk.Label(root, text="ID", font=("Arial", 12))
+    labelid = tk.Label(empleado, text="ID", font=("Arial", 12))
     labelid.place(x=100, y=50)
     
-    labelnombre = tk.Label(root, text="Nombre", font=("Arial", 12))
+    labelnombre = tk.Label(empleado, text="Nombre", font=("Arial", 12))
     labelnombre.place(x=100, y=80)
     
-    labelapellido = tk.Label(root, text="Apellido", font=("Arial", 12))
+    labelapellido = tk.Label(empleado, text="Apellido", font=("Arial", 12))
     labelapellido.place(x=100, y=110)
     
-    labelusuario = tk.Label(root, text="Usuario", font=("Arial", 12))
+    labelusuario = tk.Label(empleado, text="Usuario", font=("Arial", 12))
     labelusuario.place(x=100, y=140)
     
-    labelcontraseña = tk.Label(root, text="Contraseña", font=("Arial", 12))
+    labelcontraseña = tk.Label(empleado, text="Contraseña", font=("Arial", 12))
     labelcontraseña.place(x=100, y=170)
     
-    labelrol = tk.Label(root, text="Rol", font=("Arial", 12))
+    labelrol = tk.Label(empleado, text="Rol", font=("Arial", 12))
     labelrol.place(x=100, y=200)
     
-    identificador = tk.Entry(root)
+    identificador = tk.Entry(empleado)
     identificador.place(x=270, y=50)
     
-    name = tk.Entry(root)
+    name = tk.Entry(empleado)
     name.place(x=270, y=80)
     
-    apellido = tk.Entry(root)
+    apellido = tk.Entry(empleado)
     apellido.place(x=270, y=110)
     
-    usuario = tk.Entry(root)
+    usuario = tk.Entry(empleado)
     usuario.place(x=270, y=140)
     
-    password = tk.Entry(root)
+    password = tk.Entry(empleado)
     password.place(x=270, y=170)
     
-    rol = tk.Entry(root)
+    rol = tk.Entry(empleado)
     rol.place(x=270, y=200)
     
-    tk.Button(root,text="Crear",command=add, height=5, width=10, font=("Arial",12)).place(x=100,y=230)
-    tk.Button(root,text="Editar",command=edit, height=5, width=10, font=("Arial",12)).place(x=250,y=230)
-    tk.Button(root,text="Eliminar",command=delete, height=5, width=10, font=("Arial",12)).place(x=400,y=230)
+    tk.Button(empleado,text="Crear",command=add, height=5, width=10, font=("Arial",12)).place(x=100,y=230)
+    tk.Button(empleado,text="Editar",command=edit, height=5, width=10, font=("Arial",12)).place(x=250,y=230)
+    tk.Button(empleado,text="Eliminar",command=delete, height=5, width=10, font=("Arial",12)).place(x=400,y=230)
+    tk.Button(empleado,text="Regresar",command=lambda: regresar_login(empleado), height=5, width=10, font=("Arial", 12)).place(x=550,y=230)
     
     columnas = ("Id","Nombre","Apellido","Usuario","Contraseña","Rol")
-    listbox = ttk.Treeview(root,columns=columnas,show="headings")
+    listbox = ttk.Treeview(empleado,columns=columnas,show="headings")
     
     for col in columnas:
         listbox.heading(col, text=col)
@@ -230,12 +240,10 @@ def registrar_empleado():
     mostrar()
     listbox.bind("<Double-Button-1>",obtenerR)
     
-    
-    root.mainloop()
-  
   
     
-def registrar_libro():
+def registrar_libro(ventana_actual):
+    ventana_actual.destroy()
     
     def mostrar():
         mysqlC = mysql.connector.connect(host= "localhost", user="root", password="", database="proyecto")
@@ -258,7 +266,7 @@ def registrar_libro():
         micursos=mysqlC.cursor()
         
         try:
-            micursos.execute(f"insert into usuarios(id,titulo,autor,editorial,año,precio) values('{idAdd}','{tituloAdd}','{autorAdd}','{editorialAdd}','{añoAdd}','{precioAdd}')")
+            micursos.execute(f"insert into libros(id,titulo,autor,editorial,año,precio) values('{idAdd}','{tituloAdd}','{autorAdd}','{editorialAdd}','{añoAdd}','{precioAdd}')")
             mysqlC.commit()
             identificador.delete(0,END)
             titulo.delete(0,END)
@@ -294,7 +302,7 @@ def registrar_libro():
         titulo.insert(0,seleccion["Titulo"])
         autor.insert(0,seleccion["Autor"])
         editorial.insert(0,seleccion["Editorial"])
-        año.insert(0,seleccion["Año de Publicacion"])
+        año.insert(0,seleccion["Año"])
         precio.insert(0,seleccion["Precio"])
         
     def delete():
@@ -330,7 +338,7 @@ def registrar_libro():
         micursos=mysqlC.cursor()
         
         try:
-            micursos.execute(f"UPDATE libros set titulo='{tituloAdd}', autor='{autorAdd}', editorial='{editorialAdd}', año='{añoAdd}', precio='{precioAdd} where id={idAdd}")
+            micursos.execute(f"UPDATE libros set titulo='{tituloAdd}', autor='{autorAdd}', editorial='{editorialAdd}', año='{añoAdd}', precio='{precioAdd}' where id={idAdd}")
             mysqlC.commit()
             identificador.delete(0,END)
             titulo.delete(0,END)
@@ -346,60 +354,54 @@ def registrar_libro():
         actualizar()
         
 
-    root = tk.Tk()
-    root.geometry("1200x500")
+    book = tk.Toplevel()
+    book.geometry("1200x500")
     
-    label1 = tk.Label(root,text="Registro de Libros", fg="red",font=("Arial",28)).place(x=500,y=0)
-    
-    global identificador
-    global titulo
-    global autor
-    global editorial
-    global año
-    global precio
-    
-    labelid = tk.Label(root, text="ID", font=("Arial", 12))
+    label1 = tk.Label(book,text="Registro de Libros", fg="red",font=("Arial",28)).place(x=500,y=0)
+     
+    labelid = tk.Label(book, text="ID", font=("Arial", 12))
     labelid.place(x=100, y=50)
     
-    labeltitulo = tk.Label(root, text="Titulo", font=("Arial", 12))
+    labeltitulo = tk.Label(book, text="Titulo", font=("Arial", 12))
     labeltitulo.place(x=100, y=80)
     
-    labelautor = tk.Label(root, text="Autor", font=("Arial", 12))
+    labelautor = tk.Label(book, text="Autor", font=("Arial", 12))
     labelautor.place(x=100, y=110)
     
-    labeleditorial = tk.Label(root, text="Editorial", font=("Arial", 12))
+    labeleditorial = tk.Label(book, text="Editorial", font=("Arial", 12))
     labeleditorial.place(x=100, y=140)
     
-    labelaño = tk.Label(root, text="Año de Publicacion", font=("Arial", 12))
+    labelaño = tk.Label(book, text="Año de Publicacion", font=("Arial", 12))
     labelaño.place(x=100, y=170)
     
-    labelprecio = tk.Label(root, text="Precio", font=("Arial", 12))
+    labelprecio = tk.Label(book, text="Precio", font=("Arial", 12))
     labelprecio.place(x=100, y=200)
     
-    identificador = tk.Entry(root)
+    identificador = tk.Entry(book)
     identificador.place(x=270, y=50)
     
-    titulo = tk.Entry(root)
+    titulo = tk.Entry(book)
     titulo.place(x=270, y=80)
     
-    autor = tk.Entry(root)
+    autor = tk.Entry(book)
     autor.place(x=270, y=110)
     
-    editorial = tk.Entry(root)
+    editorial = tk.Entry(book)
     editorial.place(x=270, y=140)
     
-    año = tk.Entry(root)
+    año = tk.Entry(book)
     año.place(x=270, y=170)
     
-    precio = tk.Entry(root)
+    precio = tk.Entry(book)
     precio.place(x=270, y=200)
     
-    tk.Button(root,text="Crear",command=add, height=5, width=10, font=("Arial",12)).place(x=100,y=230)
-    tk.Button(root,text="Editar",command=edit, height=5, width=10, font=("Arial",12)).place(x=250,y=230)
-    tk.Button(root,text="Eliminar",command=delete, height=5, width=10, font=("Arial",12)).place(x=400,y=230)
+    tk.Button(book,text="Crear",command=add, height=5, width=10, font=("Arial",12)).place(x=100,y=230)
+    tk.Button(book,text="Editar",command=edit, height=5, width=10, font=("Arial",12)).place(x=250,y=230)
+    tk.Button(book,text="Eliminar",command=delete, height=5, width=10, font=("Arial",12)).place(x=400,y=230)
+    tk.Button(book,text="Regresar",command=lambda: regresar_login(book), height=5, width=10, font=("Arial",12)).place(x=550,y=230)
     
     columnas = ("Id","Titulo","Autor","Editorial","Año de Publicacion","Precio")
-    listbox = ttk.Treeview(root,columns=columnas,show="headings")
+    listbox = ttk.Treeview(book,columns=columnas,show="headings")
     
     for col in columnas:
         listbox.heading(col, text=col)
@@ -409,29 +411,28 @@ def registrar_libro():
     mostrar()
     listbox.bind("<Double-Button-1>",obtenerR)
     
+def pantalla_admin():
+    ventana_admin = tk.Toplevel()
+    ventana_admin.title("Administrador")
+    ventana_admin.geometry("400x300")
     
-    root.mainloop()
+    tk.Label(ventana_admin, text="Ventana Administrador", font=("Arial, 16")).pack(pady=20)
+    tk.Button(ventana_admin, text="Registrar Empleado", command=lambda: registrar_empleado(ventana_admin)).pack(pady=10)
+    tk.Button(ventana_admin, text="Regresar al Login",command=lambda: regresar_login(ventana_admin)).pack(pady=10)
 
-#! Para realizar los cambios de pantalla entre admin y empleado es con un if al momento de realizar el login
+def pantalla_empleado():
+    ventana_empleado = tk.Toplevel()
+    ventana_empleado.title("Empleado")
+    ventana_empleado.geometry("400x300")
+    
+    tk.Label(ventana_empleado, text="Pantalla de Empleado", font=("Arial", 16)).pack(pady=20)
+    tk.Button(ventana_empleado, text="Registrar Libro", command=lambda: registrar_libro(ventana_empleado)).pack(pady=10)
+    tk.Button(ventana_empleado, text="Regresar al Login", command=lambda: regresar_login(ventana_empleado)).pack(pady=10)
 
-# def pantalla_admin():
-#     def abrir_segunda_ventana():
-#         ventana_principal.withdraw()
-        
-#         ventana_sec = tk.Toplevel(ventana_principal)
-#         ventana_sec.title("Segunda Ventana")
-        
-#         def regresar_a_principal():
-#             ventana_sec.destroy()  
-#             ventana_principal.deiconify()  
+def regresar_login(ventana_actual):
+    ventana_actual.destroy()
+    root.deiconify()
 
-#         boton_regresar = tk.Button(ventana_sec, text="Regresar a la ventana principal", command=regresar_a_principal)
-#         boton_regresar.pack(pady=20)
+login()
 
-#     ventana_principal = tk.Tk()
-#     ventana_principal.title("Ventana Principal")
-
-#     boton_abrir_segunda_ventana = tk.Button(ventana_principal, text="Abrir segunda ventana", command=abrir_segunda_ventana)
-#     boton_abrir_segunda_ventana.pack(pady=20)
-
-#     ventana_principal.mainloop()
+#! FALTA EL FILTRO
